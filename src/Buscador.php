@@ -16,7 +16,7 @@ class Buscador
         $this->crawler = $crawler;
     }
 
-    public function buscar(string $url) : array
+    public function buscar(string $url): array
     {
         $response = $this->httpClient->request('GET', $url);
 
