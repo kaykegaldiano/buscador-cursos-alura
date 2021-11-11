@@ -2,7 +2,9 @@
 
 namespace Alura\BuscadorDeCursos;
 
+use Error;
 use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Exception\ClientException;
 use Symfony\Component\DomCrawler\Crawler;
 
 class Buscador
@@ -18,18 +20,22 @@ class Buscador
 
     public function buscar(string $url): array
     {
-        $response = $this->httpClient->request('GET', $url);
+        try {
+            $response = $this->httpClient->request('GET', $url);
 
-        $html = $response->getBody();
-        $this->crawler->addHtmlContent($html);
+            $html = $response->getBody();
+            $this->crawler->addHtmlContent($html);
 
-        $elementosCursos = $this->crawler->filter('p.formacao-passo-nome');
-        $cursos = [];
+            $elementosCursos = $this->crawler->filter('p.formacao-passo-nome');
+            $cursos = [];
 
-        foreach ($elementosCursos as $elemento) {
-            $cursos[] = $elemento->textContent;
+            foreach ($elementosCursos as $elemento) {
+                $cursos[] = $elemento->textContent;
+            }
+
+            return $cursos;
+        } catch(ClientException $e) {
+        echo "Erro inesperado" . PHP_EOL;
         }
-
-        return $cursos;
     }
 }
